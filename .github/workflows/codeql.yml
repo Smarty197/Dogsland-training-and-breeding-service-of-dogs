@@ -1,0 +1,28 @@
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.filechooser import FileChooserListView
+import PyPDF2
+
+class PDFReaderApp(App):
+    def build(self):
+        layout = BoxLayout(orientation='vertical')
+        
+        file_chooser = FileChooserListView()
+        layout.add_widget(file_chooser)
+        
+        read_button = Button(text="Read PDF", on_press=lambda _: self.read_pdf(file_chooser.selection[0]))
+        layout.add_widget(read_button)
+        
+        return layout
+
+    def read_pdf(self, file_path):
+        with open(file_path, 'rb') as file:
+            pdf_reader = PyPDF2.PdfReader(file)
+            num_pages = len(pdf_reader.pages)
+            for page_num in range(num_pages):
+                page = pdf_reader.pages[page_num]
+                print(page.extract_text())
+
+if __name__ == '__main__':
+    PDFReaderApp().run(
